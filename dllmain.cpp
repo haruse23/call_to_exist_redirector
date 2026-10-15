@@ -19,7 +19,7 @@ long long __fastcall hkPACFind(void* pacBase, long long* outEntry, void* cmpCtx)
     if (!ret) return 0;
 
     __try {
-        const char* wanted = *(const char**)((uintptr_t)cmpCtx + 8);
+        const char* wanted_name = (const char*)outEntry[2];     // out + 0x10
         const char* type = (const char*)outEntry[0];
 
         char tag[5] = { 0 };
@@ -28,13 +28,13 @@ long long __fastcall hkPACFind(void* pacBase, long long* outEntry, void* cmpCtx)
         bool type_found = false;
         for (auto t : Filetypes) if (strcmp(t, tag) == 0) { type_found = true; break; }
 
-        if (wanted && type_found) {
+        if (wanted_name && type_found) {
             char exePath[MAX_PATH];
             GetModuleFileNameA(NULL, exePath, MAX_PATH);
             *strrchr(exePath, '\\') = 0;
 
-            const char* fn = strrchr(wanted, '/');
-            fn = fn ? fn + 1 : wanted;
+            const char* fn = strrchr(wanted_name, '/');
+            fn = fn ? fn + 1 : wanted_name;
 
             char fnNoExt[MAX_PATH];
             strcpy_s(fnNoExt, fn);
